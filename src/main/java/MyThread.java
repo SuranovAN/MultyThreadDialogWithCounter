@@ -1,7 +1,7 @@
 import java.util.concurrent.Callable;
 
 public class MyThread extends Thread implements Callable<Integer> {
-    static Integer count = 0;
+    Integer count = 0;
 
 
     @Override
@@ -12,14 +12,10 @@ public class MyThread extends Thread implements Callable<Integer> {
                 System.out.printf("Я поток %s. Всем привет!\n", getName());
             }
         } catch (InterruptedException e) {
-
+            e.printStackTrace();
         } finally {
             System.out.printf("%s звершён\n", getName());
         }
-    }
-
-    public MyThread(ThreadGroup group, String name) {
-        super(group, name);
     }
 
     public MyThread() {
@@ -27,11 +23,16 @@ public class MyThread extends Thread implements Callable<Integer> {
 
     @Override
     public Integer call() {
-        while (count < 10) {
-            System.out.println("итерация " + count);
+        while (count < 5) {
+            System.out.println(Thread.currentThread().getName() + " итерация " + count);
             count++;
+            try {
+                Thread.sleep(2500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-        System.out.println(Thread.currentThread().getName());
+        Thread.currentThread().interrupt();
         return count;
     }
 }
