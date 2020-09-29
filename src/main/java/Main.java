@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -9,24 +10,30 @@ public class Main {
         System.out.println("Создаю потоки");
 
         final ExecutorService threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        Set<Callable<Integer>> callables = new HashSet<>();
-        callables.add(new MyThread());
-        callables.add(new MyThread());
-        callables.add(new MyThread());
-        callables.add(new MyThread());
+        List<Callable<Integer>> futureList = new ArrayList<>();
+        futureList.add(new MyCallable());
+        futureList.add(new MyCallable());
+        futureList.add(new MyCallable());
+        futureList.add(new MyCallable());
 
-        List<Future<Integer>> futures = threadPool.invokeAll(callables);
-        Integer futureAny = threadPool.invokeAny(callables);
+        threadPool.invokeAll(futureList);
 
-        futures.forEach(f -> {
+        Integer futureAny = threadPool.invokeAny(futureList);
+
+        futureList.forEach(f -> {
             try {
-                System.out.println(f.get());
-            } catch (InterruptedException | ExecutionException e) {
+                System.out.println(f.call());
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });
 
-        Thread.sleep(15000);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+
+        }
+
         System.out.println("Result ANY " + futureAny);
         System.out.println("Завершаю все потоки");
         threadPool.shutdown();
