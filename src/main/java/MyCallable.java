@@ -14,7 +14,6 @@ public class MyCallable implements Callable<Integer> {
                 e.printStackTrace();
             }
         }
-        Thread.currentThread().interrupt();
         return count;
     }
 }
